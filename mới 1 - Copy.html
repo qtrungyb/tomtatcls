@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tóm tắt CLS</title>
+<style>
+    :root {
+        --primary-color: #2980b9;
+        --primary-light: #e6f2fb;
+        --primary-dark: #1c5d94;
+        --secondary-color: #27ae60;
+        --secondary-dark: #1f8f4c;
+        --text-color: #2c3e50;
+        --text-light: #34495e;
+        --bg-color: #f0f4f8;
+        --card-bg: #ffffff;
+        --border-radius: 16px;
+        --box-shadow: 0 8px 30px rgba(44, 62, 80, 0.12);
+        --transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: var(--bg-color);
+        color: var(--text-color);
+        line-height: 1.6;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    #container {
+        display: flex;
+        width: min(1100px, 95%);
+        max-width: 100%;
+        min-height: 80vh;
+        background: var(--card-bg);
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        overflow: hidden;
+        transition: var(--transition);
+    }
+
+    #inputArea, #tableArea {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 2.5rem;
+        overflow: hidden;
+    }
+
+    #inputArea {
+        background: var(--primary-light);
+        border-right: 1px solid rgba(41, 128, 185, 0.2);
+    }
+
+    h2 {
+        font-weight: 700;
+        font-size: 1.75rem;
+        color: var(--primary-color);
+        margin-bottom: 2rem;
+        text-align: center;
+        position: relative;
+        padding-bottom: 0.5rem;
+    }
+
+    h2::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary-color), rgba(41, 128, 185, 0.3));
+        border-radius: 3px;
+    }
+
+    textarea#inputData {
+        flex-grow: 1;
+        padding: 1.5rem;
+        font-family: 'Courier New', monospace;
+        font-size: 0.95rem;
+        background: var(--card-bg);
+        border: 1px solid rgba(41, 128, 185, 0.3);
+        border-radius: 12px;
+        resize: none;
+        color: var(--text-color);
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+        transition: var(--transition);
+        line-height: 1.7;
+    }
+
+    textarea#inputData:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.2);
+        outline: none;
+    }
+
+    button {
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        transition: var(--transition);
+        text-transform: uppercase;
+        font-size: 0.9rem;
+    }
+
+    button#processBtn {
+        margin-top: 1.5rem;
+        background-color: var(--primary-color);
+        color: white;
+        padding: 1rem;
+        box-shadow: 0 4px 15px rgba(41, 128, 185, 0.3);
+    }
+
+    button#processBtn:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(41, 128, 185, 0.4);
+    }
+
+    button#processBtn:active {
+        transform: translateY(0);
+    }
+
+    #summaryContainer {
+        margin-top: 2rem;
+        display: none;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    #summary {
+        font-weight: 500;
+        font-size: 1rem;
+        color: var(--text-light);
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 10px;
+        padding: 1rem;
+        width: 100%;
+        text-align: center;
+        box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    button#copySummaryBtn {
+        background: var(--secondary-color);
+        color: white;
+        padding: 0.8rem 2rem;
+        box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        width: 100%;
+    }
+
+    button#copySummaryBtn:hover {
+        background: var(--secondary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+    }
+
+    #tableArea {
+        background: var(--card-bg);
+        position: relative;
+    }
+
+    table#dataTable {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    table#dataTable th {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 1rem;
+        font-weight: 700;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    table#dataTable td {
+        padding: 0.8rem 1rem;
+        background: rgba(230, 242, 251, 0.5);
+        border: none;
+    }
+
+    table#dataTable tr:hover td {
+        background: rgba(203, 230, 255, 0.7);
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: rgba(41, 128, 185, 0.5);
+        border-radius: 3px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        #container {
+            flex-direction: column;
+            min-height: auto;
+        }
+      
+        #inputArea, #tableArea {
+            padding: 1.5rem;
+        }
+      
+        #inputArea {
+            border-right: none;
+            border-bottom: 1px solid rgba(41, 128, 185, 0.2);
+        }
+      
+        textarea#inputData {
+            min-height: 200px;
+        }
+      
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+    }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+<div id="container" role="main" aria-label="Ứng dụng tóm tắt CLS">
+
+    <section id="inputArea" aria-labelledby="inputTitle">
+        <h2 id="inputTitle">Nhập chỉ số</h2>
+        <textarea id="inputData" aria-describedby="inputDesc" placeholder="Dán dữ liệu chỉ số vào đây..."></textarea>
+        <button id="processBtn" onclick="processData()" aria-label="Xử lý dữ liệu">Tóm tắt cận lâm sàng</button>
+        <div id="summaryContainer" role="region" aria-live="polite">
+            <p id="summary"></p>
+            <button id="copySummaryBtn" onclick="copySummary()" aria-label="Sao chép tóm tắt dữ liệu">Sao chép</button>
+        </div>
+    </section>
+
+    <section id="tableArea" aria-labelledby="tableTitle"> 
+        <h2 id="tableTitle">Bảng chỉ số</h2>
+        <table id="dataTable" aria-describedby="tableDesc" role="table">
+            <thead role="rowgroup">
+                <tr role="row">
+                    <th role="columnheader" scope="col">STT</th>
+                    <th role="columnheader" scope="col">Mã</th>
+                    <th role="columnheader" scope="col">Tên chỉ số</th>
+                    <th role="columnheader" scope="col">Đơn vị đo</th>
+                    <th role="columnheader" scope="col">Trung bình</th>
+                    <th role="columnheader" scope="col">Giá trị</th>
+                </tr>
+            </thead>
+            <tbody role="rowgroup">
+               
+            </tbody>
+        </table>
+    </section>
+
+</div>
+
+<script>
+    const excludeIndices = [  //bỏ qua mấy cái này//
+        "Thể tích trung bình hồng cầu (MCV)",
+        "Lượng HST trung bình hồng cầu (MCH)",
+        "Nồng độ HST trung bình hồng cầu (MCHC)",
+        "Thể tích khối tiểu cầu (PCT)",
+        "Độ phân tán của đường kính tiểu cầu (PDW)",
+        "Ưa axít + Ưa bazơ + Mono",
+        "Lympho",
+        "Độ phân tán của đường kính hồng cầu (RDW)",
+        "Đo tiểu cầu có kích thước lớn (P_LCC)",
+        "Thể tích trung bình tiểu cầu (MPV)",
+        "Số lượng bạch cầu lympho",
+        "Số lượng bạch cầu mono",
+        "Số lượng bạch cầu GR",
+        "Tỷ lệ tiểu cầu có kích thước lớn (P_LCR)"
+    ];
+
+    function processData() {
+        const inputData = document.getElementById('inputData').value.trim();
+        if (!inputData) {
+            alert("Vui lòng dán dữ liệu trước khi tóm tắt.");
+            return;
+        }
+
+        const rows = inputData.split('\n');
+        const tableBody = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
+        tableBody.innerHTML = '';
+
+        let displayedIndex = 0;
+        let summaryPieces = [];
+
+        rows.forEach((row) => {
+            const columns = row.split('\t');
+            if (columns.length >= 6) {
+                const name = columns[2].trim();
+                const value = columns[5].trim();
+
+                if (!excludeIndices.includes(name) && value !== "" && value !== "-") {
+                    displayedIndex++;
+                    const newRow = tableBody.insertRow();
+                    newRow.insertCell(0).innerText = displayedIndex;
+                    newRow.insertCell(1).innerText = columns[1];
+                    newRow.insertCell(2).innerText = name;
+                    newRow.insertCell(3).innerText = columns[3];
+                    newRow.insertCell(4).innerText = columns[4];
+                    newRow.insertCell(5).innerText = value;
+
+                    let shortName;
+                    switch (name) {  //viết tắt//
+                        case "Số lượng hồng cầu": shortName = "HC"; break;
+                        case "Huyết sắc tố": shortName = "Hb"; break;
+                        case "Hematocrit": shortName = "HTC"; break;
+                        case "Số lượng tiểu cầu": shortName = "TC"; break;
+                        case "Số lượng bạch cầu": shortName = "BC"; break;
+                        case "Tỷ lệ bạch cầu GR": shortName = "N"; break;
+                        default: shortName = name;
+                    }
+                    summaryPieces.push(`${shortName} ${value}`);
+                }
+            }
+        });
+
+        const summaryText = summaryPieces.length > 0 ? summaryPieces.join(", ") : "Không tìm thấy dữ liệu để tóm tắt.";
+        const summaryContainer = document.getElementById('summaryContainer');
+        const summaryElem = document.getElementById('summary');
+        summaryElem.innerText = summaryText;
+        summaryContainer.style.display = summaryPieces.length > 0 ? "flex" : "none";
+    }
+
+    function copySummary() {
+        const summaryText = document.getElementById('summary').innerText;
+        if (!summaryText || summaryText === "Không tìm thấy dữ liệu để tóm tắt.") {
+            alert("Không có dữ liệu tóm tắt để sao chép.");
+            return;
+        }
+
+        navigator.clipboard.writeText(summaryText).then(() => {
+            alert("Đã sao chép thành công!");
+        }, () => {
+            alert("Sao chép thất bại. Vui lòng thử lại.");
+        });
+    }
+</script>
+
+</body>
+</html>
