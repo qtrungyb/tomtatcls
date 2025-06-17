@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Tóm tắt CLS - Cải tiến</title>
+<title>Tóm tắt CLS</title>
 <style>
     :root {
         --primary-color: #2980b9;
@@ -24,10 +24,26 @@
         --transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
     }
 
+    .dark-mode {
+        --primary-color: #3498db;
+        --primary-light: #1d3557;
+        --primary-dark: #2c3e50;
+        --secondary-color: #2ecc71;
+        --secondary-dark: #27ae60;
+        --accent-color: #f39c12;
+        --accent-dark: #e67e22;
+        --text-color: #ecf0f1;
+        --text-light: #bdc3c7;
+        --bg-color: #121212;
+        --card-bg: #1e1e1e;
+        --box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    }
+
     * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
+        transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     body {
@@ -52,6 +68,7 @@
         box-shadow: var(--box-shadow);
         overflow: hidden;
         transition: var(--transition);
+        position: relative;
     }
 
     #inputArea, #tableArea {
@@ -160,20 +177,6 @@
         box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
     }
 
-    button#fileBtn {
-        background-color: var(--accent-color);
-        color: white;
-        padding: 1rem;
-        box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);
-        flex: 1;
-    }
-
-    button#fileBtn:hover {
-        background-color: var(--accent-dark);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(230, 126, 34, 0.4);
-    }
-
     #summaryContainer {
         margin-top: 2rem;
         display: none;
@@ -186,7 +189,7 @@
         font-weight: 500;
         font-size: 1rem;
         color: var(--text-light);
-        background: rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.1);
         border-radius: 10px;
         padding: 1rem;
         width: 100%;
@@ -264,20 +267,37 @@
 
     table#dataTable td {
         padding: 0.8rem 1rem;
-        background: rgba(230, 242, 251, 0.5);
+        background: rgba(230, 242, 251, 0.2);
         border: none;
+        color: var(--text-color);
     }
 
     table#dataTable tr:hover td {
-        background: rgba(203, 230, 255, 0.7);
+        background: rgba(203, 230, 255, 0.3);
     }
 
-    /* File input hidden */
-    #fileInput {
-        display: none;
+    #themeToggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 20;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     }
 
-    /* Toast notification */
+    #themeToggle:hover {
+        transform: scale(1.1);
+    }
+
     .toast {
         position: fixed;
         bottom: 20px;
@@ -298,7 +318,6 @@
         transform: translateX(-50%) translateY(0);
     }
 
-    /* Scrollbar styling */
     ::-webkit-scrollbar {
         width: 6px;
         height: 6px;
@@ -309,7 +328,6 @@
         border-radius: 3px;
     }
 
-    /* Responsive adjustments */
     @media (max-width: 768px) {
         #container {
             flex-direction: column;
@@ -337,6 +355,13 @@
         .button-group, .export-group {
             flex-direction: column;
         }
+
+        #themeToggle {
+            top: 15px;
+            right: 15px;
+            width: 35px;
+            height: 35px;
+        }
     }
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
@@ -344,6 +369,11 @@
 </head>
 <body>
 <div id="container" role="main" aria-label="Ứng dụng tóm tắt CLS">
+    <!-- Nút chuyển đổi chế độ sáng/tối -->
+    <button id="themeToggle" aria-label="Chuyển đổi chế độ sáng tối">
+        <i class="fas fa-moon"></i>
+    </button>
+    
     <section id="inputArea" aria-labelledby="inputTitle">
         <h2 id="inputTitle">Nhập chỉ số</h2>
         <textarea id="inputData" aria-describedby="inputDesc" placeholder="Dán dữ liệu chỉ số vào đây..."></textarea>
@@ -355,10 +385,6 @@
             <button id="clearBtn" onclick="clearData()" aria-label="Xóa dữ liệu">
                 <i class="fas fa-trash"></i> Xóa
             </button>
-            <button id="fileBtn" onclick="document.getElementById('fileInput').click()" aria-label="Chọn file dữ liệu">
-                <i class="fas fa-file-import"></i> Chọn file
-            </button>
-            <input type="file" id="fileInput" accept=".txt" onchange="loadFile(this.files[0])" style="display: none;">
         </div>
         
         <div id="summaryContainer" role="region" aria-live="polite">
@@ -389,7 +415,7 @@
                     </tr>
                 </thead>
                 <tbody role="rowgroup">
-                    <!-- Dữ liệu sẽ được thêm tại đây -->
+
                 </tbody>
             </table>
         </div>
@@ -399,7 +425,7 @@
 <div id="toast" class="toast"></div>
 
 <script>
-    // Danh sách các chỉ số cần bỏ qua
+
     const excludeIndices = [
         "Thể tích trung bình hồng cầu (MCV)",
         "Lượng HST trung bình hồng cầu (MCH)",
@@ -417,7 +443,7 @@
         "Tỷ lệ tiểu cầu có kích thước lớn (P_LCR)"
     ];
 
-    // Hiển thị thông báo toast
+
     function showToast(message, isSuccess = true) {
         const toast = document.getElementById('toast');
         toast.textContent = message;
@@ -429,9 +455,8 @@
         }, 3000);
     }
 
-    // Xử lý khi trang được tải
     document.addEventListener('DOMContentLoaded', function() {
-        // Khôi phục dữ liệu từ localStorage nếu có
+
         const savedData = localStorage.getItem('cls_data');
         if (savedData) {
             const data = JSON.parse(savedData);
@@ -443,9 +468,35 @@
                 document.getElementById('summaryContainer').style.display = 'flex';
             }
         }
+        
+
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        setDarkMode(isDarkMode);
+        
+
+        document.getElementById('themeToggle').addEventListener('click', toggleDarkMode);
     });
 
-    // Xử lý dữ liệu
+
+    function toggleDarkMode() {
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        setDarkMode(!isDarkMode);
+    }
+
+
+    function setDarkMode(enable) {
+        if (enable) {
+            document.body.classList.add('dark-mode');
+            document.querySelector('#themeToggle i').classList.replace('fa-moon', 'fa-sun');
+            localStorage.setItem('darkMode', 'true');
+        } else {
+            document.body.classList.remove('dark-mode');
+            document.querySelector('#themeToggle i').classList.replace('fa-sun', 'fa-moon');
+            localStorage.setItem('darkMode', 'false');
+        }
+    }
+
+
     function processData() {
         const inputData = document.getElementById('inputData').value.trim();
         if (!inputData) {
@@ -491,23 +542,20 @@
             }
         });
 
-        // Hiển thị bảng
         renderTable(tableData);
 
-        // Hiển thị tóm tắt
         const summaryText = summaryPieces.length > 0 ? summaryPieces.join(", ") : "Không tìm thấy dữ liệu để tóm tắt.";
         const summaryContainer = document.getElementById('summaryContainer');
         const summaryElem = document.getElementById('summary');
         summaryElem.textContent = summaryText;
         summaryContainer.style.display = summaryPieces.length > 0 ? "flex" : "none";
 
-        // Lưu vào localStorage
         saveToLocalStorage(inputData, tableData, summaryText);
         
         showToast("Đã xử lý dữ liệu thành công!");
     }
 
-    // Hiển thị bảng
+
     function renderTable(tableData) {
         const tableBody = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
         tableBody.innerHTML = '';
@@ -523,7 +571,6 @@
         });
     }
 
-    // Lưu dữ liệu vào localStorage
     function saveToLocalStorage(input, table, summary) {
         const data = {
             input: input,
@@ -533,7 +580,7 @@
         localStorage.setItem('cls_data', JSON.stringify(data));
     }
 
-    // Xóa dữ liệu
+
     function clearData() {
         document.getElementById('inputData').value = '';
         document.getElementById('dataTable').getElementsByTagName('tbody')[0].innerHTML = '';
@@ -542,7 +589,7 @@
         showToast("Đã xóa dữ liệu");
     }
 
-    // Sao chép tóm tắt
+
     function copySummary() {
         const summaryText = document.getElementById('summary').textContent;
         if (!summaryText || summaryText === "Không tìm thấy dữ liệu để tóm tắt.") {
@@ -557,19 +604,7 @@
         });
     }
 
-    // Tải file
-    function loadFile(file) {
-        if (!file) return;
-        
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('inputData').value = e.target.result;
-            showToast(`Đã tải file: ${file.name}`);
-        };
-        reader.readAsText(file);
-    }
 
-    // Xuất Excel
     function exportToExcel() {
         const table = document.getElementById('dataTable');
         if (!table.rows.length || table.rows.length < 2) {
@@ -577,7 +612,6 @@
             return;
         }
 
-        // Tạo HTML cho file Excel
         const html = `
             <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
             <head>
@@ -590,7 +624,7 @@
             </html>
         `;
 
-        // Tạo blob và tải xuống
+
         const blob = new Blob([html], {type: 'application/vnd.ms-excel'});
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
