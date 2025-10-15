@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -164,6 +163,13 @@
         box-shadow: 0 6px 20px rgba(41, 128, 185, 0.4);
     }
 
+    button#processBtn:disabled {
+        background-color: #95a5a6;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
     button#clearBtn {
         background-color: var(--danger-color);
         color: white;
@@ -264,6 +270,22 @@
         position: sticky;
         top: 0;
         z-index: 10;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    table#dataTable th:hover {
+        background-color: var(--primary-dark);
+    }
+
+    table#dataTable th.sort-asc::after {
+        content: " ↑";
+        font-weight: normal;
+    }
+
+    table#dataTable th.sort-desc::after {
+        content: " ↓";
+        font-weight: normal;
     }
 
     table#dataTable td {
@@ -319,6 +341,88 @@
         transform: translateX(-50%) translateY(0);
     }
 
+    /* Loading spinner */
+    .spinner {
+        display: none;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top: 3px solid white;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+        margin-right: 8px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Search and filter */
+    .table-controls {
+        display: flex;
+        margin-bottom: 1rem;
+        gap: 10px;
+    }
+
+    .search-box {
+        flex: 1;
+        position: relative;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        border: 1px solid rgba(0,0,0,0.1);
+        border-radius: 50px;
+        background: var(--card-bg);
+        color: var(--text-color);
+        font-size: 0.9rem;
+        transition: var(--transition);
+    }
+
+    .search-box input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(41, 128, 185, 0.2);
+    }
+
+    .search-box i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-light);
+    }
+
+    .filter-btn {
+        background: var(--accent-color);
+        color: white;
+        padding: 0.75rem 1rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .filter-btn:hover {
+        background: var(--accent-dark);
+    }
+
+    /* Empty state */
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-light);
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
     ::-webkit-scrollbar {
         width: 6px;
         height: 6px;
@@ -357,6 +461,10 @@
             flex-direction: column;
         }
 
+        .table-controls {
+            flex-direction: column;
+        }
+
         #themeToggle {
             top: 15px;
             right: 15px;
@@ -381,6 +489,7 @@
         
         <div class="button-group">
             <button id="processBtn" onclick="processData()" aria-label="Xử lý dữ liệu">
+                <div class="spinner" id="processSpinner"></div>
                 <i class="fas fa-cogs"></i> Tóm tắt cận lâm sàng
             </button>
             <button id="clearBtn" onclick="clearData()" aria-label="Xóa dữ liệu">
@@ -403,22 +512,37 @@
 
     <section id="tableArea" aria-labelledby="tableTitle"> 
         <h2 id="tableTitle">Bảng chỉ số</h2>
+        
+        <div class="table-controls">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Tìm kiếm chỉ số..." aria-label="Tìm kiếm chỉ số">
+            </div>
+            <button class="filter-btn" id="filterBtn" aria-label="Bộ lọc">
+                <i class="fas fa-filter"></i> Lọc
+            </button>
+        </div>
+        
         <div class="table-container">
             <table id="dataTable" aria-describedby="tableDesc" role="table">
                 <thead role="rowgroup">
                     <tr role="row">
-                        <th role="columnheader" scope="col">STT</th>
-                        <th role="columnheader" scope="col">Mã</th>
-                        <th role="columnheader" scope="col">Tên chỉ số</th>
-                        <th role="columnheader" scope="col">Đơn vị đo</th>
-                        <th role="columnheader" scope="col">Trung bình</th>
-                        <th role="columnheader" scope="col">Giá trị</th>
+                        <th role="columnheader" scope="col" data-sort="stt">STT</th>
+                        <th role="columnheader" scope="col" data-sort="code">Mã</th>
+                        <th role="columnheader" scope="col" data-sort="name">Tên chỉ số</th>
+                        <th role="columnheader" scope="col" data-sort="unit">Đơn vị đo</th>
+                        <th role="columnheader" scope="col" data-sort="average">Trung bình</th>
+                        <th role="columnheader" scope="col" data-sort="value">Giá trị</th>
                     </tr>
                 </thead>
                 <tbody role="rowgroup">
-
+                    <!-- Dữ liệu sẽ được thêm vào đây -->
                 </tbody>
             </table>
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <i class="fas fa-table"></i>
+                <p>Chưa có dữ liệu để hiển thị</p>
+            </div>
         </div>
     </section>
 </div>
@@ -426,7 +550,6 @@
 <div id="toast" class="toast"></div>
 
 <script>
-
     const excludeIndices = [
         "Thể tích trung bình hồng cầu (MCV)",
         "Lượng HST trung bình hồng cầu (MCH)",
@@ -444,6 +567,9 @@
         "Tỷ lệ tiểu cầu có kích thước lớn (P_LCR)"
     ];
 
+    let currentTableData = [];
+    let currentSortColumn = 'stt';
+    let currentSortDirection = 'asc';
 
     function showToast(message, isSuccess = true) {
         const toast = document.getElementById('toast');
@@ -456,34 +582,56 @@
         }, 3000);
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    function toggleLoading(isLoading) {
+        const processBtn = document.getElementById('processBtn');
+        const spinner = document.getElementById('processSpinner');
+        
+        if (isLoading) {
+            processBtn.disabled = true;
+            spinner.style.display = 'inline-block';
+        } else {
+            processBtn.disabled = false;
+            spinner.style.display = 'none';
+        }
+    }
 
+    document.addEventListener('DOMContentLoaded', function() {
         const savedData = localStorage.getItem('cls_data');
         if (savedData) {
             const data = JSON.parse(savedData);
             document.getElementById('inputData').value = data.input || '';
             
             if (data.table && data.table.length > 0) {
-                renderTable(data.table);
+                currentTableData = data.table;
+                renderTable(currentTableData);
                 document.getElementById('summary').textContent = data.summary || '';
                 document.getElementById('summaryContainer').style.display = 'flex';
             }
         }
         
-
         const isDarkMode = localStorage.getItem('darkMode') === 'true';
         setDarkMode(isDarkMode);
         
-
         document.getElementById('themeToggle').addEventListener('click', toggleDarkMode);
+        
+        // Thêm sự kiện tìm kiếm
+        document.getElementById('searchInput').addEventListener('input', function() {
+            filterTable(this.value);
+        });
+        
+        // Thêm sự kiện sắp xếp cho các tiêu đề cột
+        document.querySelectorAll('#dataTable th').forEach(header => {
+            header.addEventListener('click', function() {
+                const column = this.getAttribute('data-sort');
+                sortTable(column);
+            });
+        });
     });
-
 
     function toggleDarkMode() {
         const isDarkMode = document.body.classList.contains('dark-mode');
         setDarkMode(!isDarkMode);
     }
-
 
     function setDarkMode(enable) {
         if (enable) {
@@ -497,7 +645,6 @@
         }
     }
 
-
     function processData() {
         const inputData = document.getElementById('inputData').value.trim();
         if (!inputData) {
@@ -505,61 +652,75 @@
             return;
         }
 
-        const rows = inputData.split('\n');
-        const tableData = [];
-        let displayedIndex = 0;
-        let summaryPieces = [];
-
-        rows.forEach((row) => {
-            const columns = row.split('\t');
-            if (columns.length >= 6) {
-                const name = columns[2].trim();
-                const value = columns[5].trim();
-
-                if (!excludeIndices.includes(name) && value !== "" && value !== "-") {
-                    displayedIndex++;
-                    const rowData = {
-                        stt: displayedIndex,
-                        code: columns[1].trim(),
-                        name: name,
-                        unit: columns[3].trim(),
-                        average: columns[4].trim(),
-                        value: value
-                    };
-                    tableData.push(rowData);
-
-                    let shortName;
-                    switch (name) {
-                        case "Số lượng hồng cầu": shortName = "Số lượng hồng cầu"; break;
-                        case "Huyết sắc tố": shortName = "Huyết sắc tố"; break;
-                        case "Hematocrit": shortName = "Hematocrit"; break;
-                        case "Số lượng tiểu cầu": shortName = "Số lượng tiểu cầu"; break;
-                        case "Số lượng bạch cầu": shortName = "Số lượng bạch cầu"; break;
-                        case "Tỷ lệ bạch cầu GR": shortName = "Tỷ lệ bạch cầu GR"; break;
-                        default: shortName = name;
-                    }
-                    summaryPieces.push(`${shortName} ${value}`);
-                }
-            }
-        });
-
-        renderTable(tableData);
-
-        const summaryText = summaryPieces.length > 0 ? summaryPieces.join(", ") : "Không tìm thấy dữ liệu để tóm tắt.";
-        const summaryContainer = document.getElementById('summaryContainer');
-        const summaryElem = document.getElementById('summary');
-        summaryElem.textContent = summaryText;
-        summaryContainer.style.display = summaryPieces.length > 0 ? "flex" : "none";
-
-        saveToLocalStorage(inputData, tableData, summaryText);
+        toggleLoading(true);
         
-        showToast("Đã xử lý dữ liệu thành công!");
-    }
+        // Giả lập thời gian xử lý
+        setTimeout(() => {
+            const rows = inputData.split('\n');
+            currentTableData = [];
+            let displayedIndex = 0;
+            let summaryPieces = [];
 
+            rows.forEach((row) => {
+                const columns = row.split('\t');
+                if (columns.length >= 6) {
+                    const name = columns[2].trim();
+                    const value = columns[5].trim();
+
+                    if (!excludeIndices.includes(name) && value !== "" && value !== "-") {
+                        displayedIndex++;
+                        const rowData = {
+                            stt: displayedIndex,
+                            code: columns[1].trim(),
+                            name: name,
+                            unit: columns[3].trim(),
+                            average: columns[4].trim(),
+                            value: value
+                        };
+                        currentTableData.push(rowData);
+
+                        let shortName;
+                        switch (name) {
+                            case "Số lượng hồng cầu": shortName = "Số lượng hồng cầu"; break;
+                            case "Huyết sắc tố": shortName = "Huyết sắc tố"; break;
+                            case "Hematocrit": shortName = "Hematocrit"; break;
+                            case "Số lượng tiểu cầu": shortName = "Số lượng tiểu cầu"; break;
+                            case "Số lượng bạch cầu": shortName = "Số lượng bạch cầu"; break;
+                            case "Tỷ lệ bạch cầu GR": shortName = "Tỷ lệ bạch cầu GR"; break;
+                            default: shortName = name;
+                        }
+                        summaryPieces.push(`${shortName} ${value}`);
+                    }
+                }
+            });
+
+            renderTable(currentTableData);
+
+            const summaryText = summaryPieces.length > 0 ? summaryPieces.join(", ") : "Không tìm thấy dữ liệu để tóm tắt.";
+            const summaryContainer = document.getElementById('summaryContainer');
+            const summaryElem = document.getElementById('summary');
+            summaryElem.textContent = summaryText;
+            summaryContainer.style.display = summaryPieces.length > 0 ? "flex" : "none";
+
+            saveToLocalStorage(inputData, currentTableData, summaryText);
+            
+            toggleLoading(false);
+            showToast("Đã xử lý dữ liệu thành công!");
+        }, 800); // Giả lập thời gian xử lý 0.8 giây
+    }
 
     function renderTable(tableData) {
         const tableBody = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
+        const emptyState = document.getElementById('emptyState');
+        
         tableBody.innerHTML = '';
+        
+        if (tableData.length === 0) {
+            emptyState.style.display = 'block';
+            return;
+        } else {
+            emptyState.style.display = 'none';
+        }
         
         tableData.forEach(row => {
             const newRow = tableBody.insertRow();
@@ -581,15 +742,16 @@
         localStorage.setItem('cls_data', JSON.stringify(data));
     }
 
-
     function clearData() {
         document.getElementById('inputData').value = '';
         document.getElementById('dataTable').getElementsByTagName('tbody')[0].innerHTML = '';
         document.getElementById('summaryContainer').style.display = 'none';
+        document.getElementById('searchInput').value = '';
+        document.getElementById('emptyState').style.display = 'block';
+        currentTableData = [];
         localStorage.removeItem('cls_data');
         showToast("Đã xóa dữ liệu");
     }
-
 
     function copySummary() {
         const summaryText = document.getElementById('summary').textContent;
@@ -605,10 +767,8 @@
         });
     }
 
-
     function exportToExcel() {
-        const table = document.getElementById('dataTable');
-        if (!table.rows.length || table.rows.length < 2) {
+        if (!currentTableData.length) {
             showToast("Không có dữ liệu để xuất Excel", false);
             return;
         }
@@ -620,11 +780,10 @@
                 <title>Bảng chỉ số CLS</title>
             </head>
             <body>
-                ${table.outerHTML}
+                ${document.getElementById('dataTable').outerHTML}
             </body>
             </html>
         `;
-
 
         const blob = new Blob([html], {type: 'application/vnd.ms-excel'});
         const a = document.createElement('a');
@@ -635,6 +794,65 @@
         document.body.removeChild(a);
         
         showToast("Đã xuất file Excel thành công!");
+    }
+
+    // Tính năng tìm kiếm
+    function filterTable(searchTerm) {
+        if (!searchTerm) {
+            renderTable(currentTableData);
+            return;
+        }
+        
+        const filteredData = currentTableData.filter(row => 
+            row.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            row.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            row.value.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        
+        renderTable(filteredData);
+    }
+
+    // Tính năng sắp xếp
+    function sortTable(column) {
+        // Xóa các lớp sắp xếp hiện tại
+        document.querySelectorAll('#dataTable th').forEach(header => {
+            header.classList.remove('sort-asc', 'sort-desc');
+        });
+        
+        // Nếu đang sắp xếp cùng cột, đảo ngược hướng
+        if (currentSortColumn === column) {
+            currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            currentSortColumn = column;
+            currentSortDirection = 'asc';
+        }
+        
+        // Thêm lớp cho cột đang sắp xếp
+        const currentHeader = document.querySelector(`#dataTable th[data-sort="${column}"]`);
+        currentHeader.classList.add(`sort-${currentSortDirection}`);
+        
+        // Sắp xếp dữ liệu
+        currentTableData.sort((a, b) => {
+            let aValue = a[column];
+            let bValue = b[column];
+            
+            // Xử lý số nếu có thể
+            if (!isNaN(aValue) && !isNaN(bValue)) {
+                aValue = parseFloat(aValue);
+                bValue = parseFloat(bValue);
+            }
+            
+            if (aValue < bValue) return currentSortDirection === 'asc' ? -1 : 1;
+            if (aValue > bValue) return currentSortDirection === 'asc' ? 1 : -1;
+            return 0;
+        });
+        
+        // Cập nhật STT sau khi sắp xếp
+        currentTableData.forEach((row, index) => {
+            row.stt = index + 1;
+        });
+        
+        renderTable(currentTableData);
     }
 </script>
 </body>
