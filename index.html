@@ -6,36 +6,39 @@
 <title>Tóm tắt CLS</title>
 <style>
     :root {
-        --primary-color: #2980b9;
-        --primary-light: #e6f2fb;
-        --primary-dark: #1c5d94;
-        --secondary-color: #27ae60;
-        --secondary-dark: #1f8f4c;
-        --accent-color: #e67e22;
-        --accent-dark: #d35400;
-        --danger-color: #e74c3c;
-        --danger-dark: #c0392b;
-        --text-color: #2c3e50;
-        --text-light: #34495e;
-        --bg-color: #f0f4f8;
+        --primary-color: #4361ee;
+        --primary-light: #eef2ff;
+        --primary-dark: #3a56d4;
+        --secondary-color: #06d6a0;
+        --secondary-dark: #05b888;
+        --accent-color: #ff9e00;
+        --accent-dark: #e88e00;
+        --danger-color: #ef476f;
+        --danger-dark: #d63a5f;
+        --text-color: #2b2d42;
+        --text-light: #6c757d;
+        --bg-color: #f8f9fa;
         --card-bg: #ffffff;
         --border-radius: 16px;
-        --box-shadow: 0 8px 30px rgba(44, 62, 80, 0.12);
+        --box-shadow: 0 8px 30px rgba(67, 97, 238, 0.12);
         --transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+        --success-color: #06d6a0;
     }
 
     .dark-mode {
-        --primary-color: #3498db;
-        --primary-light: #1d3557;
-        --primary-dark: #2c3e50;
-        --secondary-color: #2ecc71;
-        --secondary-dark: #27ae60;
-        --accent-color: #f39c12;
-        --accent-dark: #e67e22;
-        --text-color: #ecf0f1;
-        --text-light: #bdc3c7;
-        --bg-color: #121212;
-        --card-bg: #1e1e1e;
+        --primary-color: #5a7aff;
+        --primary-light: #2d3748;
+        --primary-dark: #4c6bef;
+        --secondary-color: #0acf97;
+        --secondary-dark: #09b786;
+        --accent-color: #ffb347;
+        --accent-dark: #ffa126;
+        --danger-color: #ff6b6b;
+        --danger-dark: #ff5252;
+        --text-color: #e9ecef;
+        --text-light: #adb5bd;
+        --bg-color: #121826;
+        --card-bg: #1e293b;
         --box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
     }
 
@@ -43,7 +46,7 @@
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        transition: background-color 0.3s ease, color 0.3s ease;
+        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
     }
 
     body {
@@ -81,7 +84,8 @@
 
     #inputArea {
         background: var(--primary-light);
-        border-right: 1px solid rgba(41, 128, 185, 0.2);
+        border-right: 1px solid rgba(67, 97, 238, 0.2);
+        position: relative;
     }
 
     h2 {
@@ -102,8 +106,15 @@
         transform: translateX(-50%);
         width: 60px;
         height: 3px;
-        background: linear-gradient(90deg, var(--primary-color), rgba(41, 128, 185, 0.3));
+        background: linear-gradient(90deg, var(--primary-color), rgba(67, 97, 238, 0.3));
         border-radius: 3px;
+    }
+
+    .input-group {
+        position: relative;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
     }
 
     textarea#inputData {
@@ -112,7 +123,7 @@
         font-family: 'Courier New', monospace;
         font-size: 0.95rem;
         background: var(--card-bg);
-        border: 1px solid rgba(41, 128, 185, 0.3);
+        border: 2px solid rgba(67, 97, 238, 0.2);
         border-radius: 12px;
         resize: none;
         color: var(--text-color);
@@ -123,8 +134,20 @@
 
     textarea#inputData:focus {
         border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.2);
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
         outline: none;
+    }
+
+    .input-label {
+        position: absolute;
+        top: -10px;
+        left: 15px;
+        background: var(--primary-light);
+        padding: 0 8px;
+        font-size: 0.85rem;
+        color: var(--primary-color);
+        font-weight: 600;
+        z-index: 1;
     }
 
     button {
@@ -140,6 +163,23 @@
         align-items: center;
         justify-content: center;
         gap: 8px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    button:hover::before {
+        left: 100%;
     }
 
     .button-group {
@@ -153,14 +193,14 @@
         background-color: var(--primary-color);
         color: white;
         padding: 1rem;
-        box-shadow: 0 4px 15px rgba(41, 128, 185, 0.3);
+        box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
         flex: 1;
     }
 
     button#processBtn:hover {
         background-color: var(--primary-dark);
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(41, 128, 185, 0.4);
+        box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
     }
 
     button#processBtn:disabled {
@@ -174,14 +214,14 @@
         background-color: var(--danger-color);
         color: white;
         padding: 1rem;
-        box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        box-shadow: 0 4px 15px rgba(239, 71, 111, 0.3);
         flex: 1;
     }
 
     button#clearBtn:hover {
         background-color: var(--danger-dark);
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        box-shadow: 0 6px 20px rgba(239, 71, 111, 0.4);
     }
 
     #summaryContainer {
@@ -203,6 +243,18 @@
         text-align: center;
         box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
         border: 1px solid rgba(0,0,0,0.05);
+        position: relative;
+    }
+
+    .summary-label {
+        position: absolute;
+        top: -10px;
+        left: 15px;
+        background: var(--primary-light);
+        padding: 0 8px;
+        font-size: 0.85rem;
+        color: var(--primary-color);
+        font-weight: 600;
     }
 
     .export-group {
@@ -216,28 +268,28 @@
         background: var(--secondary-color);
         color: white;
         padding: 0.8rem;
-        box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        box-shadow: 0 4px 15px rgba(6, 214, 160, 0.3);
         flex: 1;
     }
 
     button#copySummaryBtn:hover {
         background: var(--secondary-dark);
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        box-shadow: 0 6px 20px rgba(6, 214, 160, 0.4);
     }
 
     button#exportExcelBtn {
-        background: #16a085;
+        background: #118ab2;
         color: white;
         padding: 0.8rem;
-        box-shadow: 0 4px 15px rgba(22, 160, 133, 0.3);
+        box-shadow: 0 4px 15px rgba(17, 138, 178, 0.3);
         flex: 1;
     }
 
     button#exportExcelBtn:hover {
-        background: #138d75;
+        background: #0d7799;
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(22, 160, 133, 0.4);
+        box-shadow: 0 6px 20px rgba(17, 138, 178, 0.4);
     }
 
     #tableArea {
@@ -272,6 +324,7 @@
         z-index: 10;
         cursor: pointer;
         user-select: none;
+        transition: var(--transition);
     }
 
     table#dataTable th:hover {
@@ -290,13 +343,20 @@
 
     table#dataTable td {
         padding: 0.8rem 1rem;
-        background: rgba(230, 242, 251, 0.2);
+        background: rgba(238, 242, 255, 0.3);
         border: none;
         color: var(--text-color);
+        transition: var(--transition);
+    }
+
+    table#dataTable tr:nth-child(even) td {
+        background: rgba(238, 242, 255, 0.1);
     }
 
     table#dataTable tr:hover td {
-        background: rgba(203, 230, 255, 0.3);
+        background: rgba(203, 213, 255, 0.4);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
 
     #themeToggle {
@@ -326,7 +386,7 @@
         bottom: 20px;
         left: 50%;
         transform: translateX(-50%) translateY(100px);
-        background-color: #27ae60;
+        background-color: var(--success-color);
         color: white;
         padding: 12px 24px;
         border-radius: 50px;
@@ -334,6 +394,7 @@
         z-index: 1000;
         opacity: 0;
         transition: all 0.3s ease;
+        font-weight: 500;
     }
 
     .toast.show {
@@ -384,7 +445,7 @@
     .search-box input:focus {
         outline: none;
         border-color: var(--primary-color);
-        box-shadow: 0 0 0 2px rgba(41, 128, 185, 0.2);
+        box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
     }
 
     .search-box i {
@@ -408,6 +469,7 @@
 
     .filter-btn:hover {
         background: var(--accent-dark);
+        transform: translateY(-2px);
     }
 
     /* Empty state */
@@ -423,13 +485,53 @@
         opacity: 0.5;
     }
 
+    /* Floating action button for mobile */
+    .fab {
+        display: none;
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        box-shadow: 0 4px 20px rgba(67, 97, 238, 0.4);
+        z-index: 100;
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+
+    .fab:hover {
+        transform: scale(1.1);
+    }
+
+    /* Progress indicator */
+    .progress-container {
+        width: 100%;
+        height: 4px;
+        background: rgba(67, 97, 238, 0.2);
+        border-radius: 2px;
+        margin-top: 10px;
+        overflow: hidden;
+        display: none;
+    }
+
+    .progress-bar {
+        height: 100%;
+        background: var(--primary-color);
+        width: 0%;
+        transition: width 0.3s ease;
+    }
+
     ::-webkit-scrollbar {
         width: 6px;
         height: 6px;
     }
 
     ::-webkit-scrollbar-thumb {
-        background: rgba(41, 128, 185, 0.5);
+        background: rgba(67, 97, 238, 0.5);
         border-radius: 3px;
     }
 
@@ -445,7 +547,7 @@
       
         #inputArea {
             border-right: none;
-            border-bottom: 1px solid rgba(41, 128, 185, 0.2);
+            border-bottom: 1px solid rgba(67, 97, 238, 0.2);
         }
       
         textarea#inputData {
@@ -471,6 +573,12 @@
             width: 35px;
             height: 35px;
         }
+
+        .fab {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     }
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
@@ -485,7 +593,10 @@
     
     <section id="inputArea" aria-labelledby="inputTitle">
         <h2 id="inputTitle">Nhập chỉ số</h2>
-        <textarea id="inputData" aria-describedby="inputDesc" placeholder="Dán dữ liệu chỉ số vào đây..."></textarea>
+        <div class="input-group">
+            <span class="input-label">Dán dữ liệu vào đây</span>
+            <textarea id="inputData" aria-describedby="inputDesc" placeholder="Dán dữ liệu chỉ số vào đây..."></textarea>
+        </div>
         
         <div class="button-group">
             <button id="processBtn" onclick="processData()" aria-label="Xử lý dữ liệu">
@@ -497,8 +608,14 @@
             </button>
         </div>
         
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
         <div id="summaryContainer" role="region" aria-live="polite">
-            <p id="summary"></p>
+            <div id="summary">
+                <span class="summary-label">Tóm tắt</span>
+            </div>
             <div class="export-group">
                 <button id="copySummaryBtn" onclick="copySummary()" aria-label="Sao chép tóm tắt dữ liệu">
                     <i class="fas fa-copy"></i> Sao chép
@@ -547,6 +664,11 @@
     </section>
 </div>
 
+<!-- Floating Action Button for Mobile -->
+<button class="fab" id="fabToggle" aria-label="Chuyển đổi giữa nhập liệu và xem bảng">
+    <i class="fas fa-exchange-alt"></i>
+</button>
+
 <div id="toast" class="toast"></div>
 
 <script>
@@ -570,11 +692,12 @@
     let currentTableData = [];
     let currentSortColumn = 'stt';
     let currentSortDirection = 'asc';
+    let isMobileView = false;
 
     function showToast(message, isSuccess = true) {
         const toast = document.getElementById('toast');
         toast.textContent = message;
-        toast.style.backgroundColor = isSuccess ? '#27ae60' : '#e74c3c';
+        toast.style.backgroundColor = isSuccess ? 'var(--success-color)' : 'var(--danger-color)';
         toast.classList.add('show');
         
         setTimeout(() => {
@@ -585,13 +708,50 @@
     function toggleLoading(isLoading) {
         const processBtn = document.getElementById('processBtn');
         const spinner = document.getElementById('processSpinner');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
         
         if (isLoading) {
             processBtn.disabled = true;
             spinner.style.display = 'inline-block';
+            progressContainer.style.display = 'block';
+            
+            // Animate progress bar
+            let width = 0;
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                } else {
+                    width += 5;
+                    progressBar.style.width = width + '%';
+                }
+            }, 100);
         } else {
             processBtn.disabled = false;
             spinner.style.display = 'none';
+            progressContainer.style.display = 'none';
+            progressBar.style.width = '0%';
+        }
+    }
+
+    function toggleMobileView() {
+        const container = document.getElementById('container');
+        const inputArea = document.getElementById('inputArea');
+        const tableArea = document.getElementById('tableArea');
+        
+        if (isMobileView) {
+            inputArea.style.display = 'flex';
+            tableArea.style.display = 'flex';
+            isMobileView = false;
+        } else {
+            if (inputArea.style.display === 'none') {
+                inputArea.style.display = 'flex';
+                tableArea.style.display = 'none';
+            } else {
+                inputArea.style.display = 'none';
+                tableArea.style.display = 'flex';
+            }
+            isMobileView = true;
         }
     }
 
@@ -626,7 +786,29 @@
                 sortTable(column);
             });
         });
+        
+        // Kiểm tra kích thước màn hình
+        checkScreenSize();
+        window.addEventListener('resize', checkScreenSize);
+        
+        // Thêm sự kiện cho FAB trên mobile
+        document.getElementById('fabToggle').addEventListener('click', toggleMobileView);
     });
+
+    function checkScreenSize() {
+        const fab = document.getElementById('fabToggle');
+        if (window.innerWidth <= 768) {
+            fab.style.display = 'flex';
+            isMobileView = true;
+            document.getElementById('inputArea').style.display = 'flex';
+            document.getElementById('tableArea').style.display = 'none';
+        } else {
+            fab.style.display = 'none';
+            isMobileView = false;
+            document.getElementById('inputArea').style.display = 'flex';
+            document.getElementById('tableArea').style.display = 'flex';
+        }
+    }
 
     function toggleDarkMode() {
         const isDarkMode = document.body.classList.contains('dark-mode');
