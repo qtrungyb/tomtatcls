@@ -55,8 +55,7 @@
         color: var(--text-color);
         line-height: 1.6;
         display: flex;
-        justify-content: center;
-        align-items: center;
+        flex-direction: column;
         min-height: 100vh;
         padding: 20px;
     }
@@ -65,13 +64,14 @@
         display: flex;
         width: min(1100px, 95%);
         max-width: 100%;
-        min-height: 80vh;
+        flex: 1;
         background: var(--card-bg);
         border-radius: var(--border-radius);
         box-shadow: var(--box-shadow);
         overflow: hidden;
         transition: var(--transition);
         position: relative;
+        margin: 0 auto;
     }
 
     #inputArea, #tableArea {
@@ -485,6 +485,20 @@
         opacity: 0.5;
     }
 
+    /* Footer */
+    footer {
+        text-align: center;
+        padding: 1.5rem 0;
+        margin-top: 1.5rem;
+        color: var(--text-light);
+        font-size: 0.9rem;
+        border-top: 1px solid rgba(67, 97, 238, 0.1);
+    }
+
+    footer p {
+        margin: 0;
+    }
+
     /* Floating action button for mobile */
     .fab {
         display: none;
@@ -594,7 +608,7 @@
     <section id="inputArea" aria-labelledby="inputTitle">
         <h2 id="inputTitle">Nhập chỉ số</h2>
         <div class="input-group">
-            <span class="input-label">Dán dữ liệu vào đây</span>
+            <span class="input-label">Nơi dán dữ liệu</span>
             <textarea id="inputData" aria-describedby="inputDesc" placeholder="Dán dữ liệu chỉ số vào đây..."></textarea>
         </div>
         
@@ -663,6 +677,11 @@
         </div>
     </section>
 </div>
+
+<!-- Footer với bản quyền -->
+<footer>
+    <p>Tóm tắt kết quả XN trong 1 nốt nhạc, đỡ phải căn chỉnh xong xóa xóa © <b> Hà Thị Bích Hạnh</p>
+</footer>
 
 <!-- Floating Action Button for Mobile -->
 <button class="fab" id="fabToggle" aria-label="Chuyển đổi giữa nhập liệu và xem bảng">
